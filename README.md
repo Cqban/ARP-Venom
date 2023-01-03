@@ -107,7 +107,7 @@ python3 arp-venom.py -t <target_ip> -g <gateway_ip>
 
 - [x] Add main script
 - [x] Add arguments 
-- [ ] Make a restore function to "heal" the target after finished poisoning 
+- [x] Make a restore function to "heal" the target after finished poisoning 
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
